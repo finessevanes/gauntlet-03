@@ -38,28 +38,28 @@ Developers and product teams testing desktop media handling capabilities. Post-M
 ## MVP Scope
 
 ### In Scope
-✅ Desktop app that launches via Tauri  
-✅ Video import (drag & drop + file picker for MP4/MOV only)  
-✅ Library view showing imported clips  
-✅ Timeline view with draggable clips  
-✅ Video preview player (plays timeline sequence with audio)  
-✅ Trim functionality (adjust clip in/out points)  
-✅ Clip management (delete, reorder)  
-✅ Timeline zoom controls  
-✅ Export to MP4 with progress indicator  
-✅ Session state persistence (auto-restore on relaunch)  
-✅ Native app packaging (not dev mode)  
+Desktop app that launches via Tauri  
+Video import (drag & drop + file picker for MP4/MOV only)  
+Library view showing imported clips  
+Timeline view with draggable clips  
+Video preview player (plays timeline sequence with audio)  
+Trim functionality (adjust clip in/out points)  
+Clip management (delete, reorder)  
+Timeline zoom controls  
+Export to MP4 with progress indicator  
+Session state persistence (auto-restore on relaunch)  
+Native app packaging (not dev mode)  
 
 ### Out of Scope (Post-MVP)
-❌ Audio editing (audio follows video automatically)  
-❌ Transitions or effects  
-❌ Text/titles overlay  
-❌ Undo/redo  
-❌ Advanced keyboard shortcuts (beyond play/pause)  
-❌ Multi-track timeline  
-❌ Project file save/load (session state only)  
-❌ 4K video support  
-❌ Linux support  
+Audio editing (audio follows video automatically)  
+Transitions or effects  
+Text/titles overlay  
+Undo/redo  
+Advanced keyboard shortcuts (beyond play/pause)  
+Multi-track timeline  
+Project file save/load (session state only)  
+4K video support  
+Linux support  
 
 ---
 
@@ -429,7 +429,7 @@ gauntlet-03 (Klippy App)/
 ├── package.json
 ├── vite.config.ts
 ├── tsconfig.json
-└── prd-v1.md
+└── prd-mvp.md
 ```
 
 ### Data Flow

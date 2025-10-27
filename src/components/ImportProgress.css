@@ -1,0 +1,103 @@
+.import-progress-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.import-progress-modal {
+  background-color: white;
+  padding: 24px;
+  border-radius: 8px;
+  min-width: 400px;
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.import-progress-modal h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.import-status {
+  margin-bottom: 16px;
+}
+
+.import-filename {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 8px 0;
+  word-break: break-all;
+}
+
+.import-count {
+  font-size: 12px;
+  color: #999;
+  margin: 0;
+}
+
+.import-progress-bar-container {
+  width: 100%;
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.import-progress-bar {
+  height: 100%;
+  background-color: #007bff;
+  transition: width 0.3s ease;
+}
+
+.import-progress-text {
+  text-align: right;
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+}
+
+.import-error {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.import-error pre {
+  margin: 0;
+  font-size: 12px;
+  color: #721c24;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.import-close-button {
+  padding: 8px 16px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.import-close-button:hover {
+  background-color: #c82333;
+}
+
+.import-close-button:focus {
+  outline: 2px solid #c82333;
+  outline-offset: 2px;
+}

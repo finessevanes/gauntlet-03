@@ -11,6 +11,15 @@ export interface Clip {
   outPoint: number;     // Trim end in seconds
 }
 
+// Extended clip with import metadata (for display in Library)
+export interface ClipWithMetadata extends Clip {
+  thumbnail?: string;   // Base64-encoded thumbnail
+  resolution?: string;  // e.g., "1920x1080"
+  frameRate?: number;   // e.g., 29.97
+  codec?: string;       // e.g., "h264"
+  importedAt?: number;  // Timestamp in milliseconds
+}
+
 export interface Session {
   version: number;          // Schema version (currently 1)
   clips: Clip[];            // All imported clips

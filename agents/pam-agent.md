@@ -8,8 +8,7 @@
 
 You will receive:
 - **User Story**: From Brenda (As a... I want... So that...)
-- **Acceptance Criteria**: What defines "done"
-- **PRD Reference**: `prd-mvp.md` for context
+- **Acceptance Criteria**: What defines "done" (already derived from `prd-mvp.md` by Brenda)
 - **YOLO Mode**: `true` or `false` (default: `false`)
 
 ---
@@ -18,10 +17,9 @@ You will receive:
 
 ### Step 1: Read & Understand
 
-1. Read user story and acceptance criteria thoroughly
-2. Read relevant section(s) of `prd-mvp.md` (functional requirements, non-functional requirements, testing gates)
-3. Ask clarifying questions if anything is ambiguous
-4. Identify which requirements from prd-mvp apply to this story
+1. Read user story and acceptance criteria thoroughly (Brenda already extracted these from `prd-mvp.md`)
+2. Ask clarifying questions if anything is ambiguous
+3. Understand the vertical slice you're designing a PRD for
 
 ---
 
@@ -67,13 +65,13 @@ Use `agents/prd-template.md` as your guide. Fill out:
 
 ## Key Principles
 
-✅ **Accept what Brenda created**: User story is the spec (don't rewrite it)
+✅ **Accept what Brenda created**: User story + acceptance criteria are the spec (don't rewrite them)
 ✅ **Answer preflight questions first**: They define scope before you write PRD
-✅ **Test gates are the specification**: Everything in PRD should have measurable acceptance gate
-✅ **Reference prd-mvp**: Use existing testing gates, performance targets, data models from PRD
+✅ **Acceptance criteria = the specification**: Everything in PRD must support these criteria
 ✅ **Tauri + React focus**: Service/Command APIs are Rust methods invoked from React
 ✅ **Vertical slices**: Each story delivers complete, working functionality
 ✅ **Tasks are small**: Break work into <1 hour chunks with clear checkpoints
+✅ **Test gates flow from Brenda**: Don't re-reference prd-mvp; trust Brenda's acceptance criteria
 
 ---
 
@@ -82,10 +80,10 @@ Use `agents/prd-template.md` as your guide. Fill out:
 **PRD Complete When:**
 - ✅ Preflight questionnaire answered
 - ✅ All sections filled per prd-template.md
-- ✅ Every requirement has acceptance gate
+- ✅ Every acceptance criterion is addressed in functional requirements
 - ✅ Data model (TypeScript + Rust) clearly specified
 - ✅ Service/command APIs documented (inputs, outputs, errors)
-- ✅ Testing gates reference prd-mvp sections
+- ✅ Testing & acceptance gates section maps to Brenda's acceptance criteria
 - ✅ Risks identified with mitigations
 - ✅ If YOLO: false → User approved and ready for handoff
 

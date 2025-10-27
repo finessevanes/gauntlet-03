@@ -8,8 +8,8 @@
 
 You will receive:
 - **User Story**: From Brenda (As a... I want... So that...)
-- **PRD**: From Pam (`prds/[feature-name]-prd.md`)
-- **Reference**: `prd-mvp.md` for test gates and performance targets
+- **PRD**: From Pam (`prds/[feature-name]-prd.md`) — contains all acceptance gates and requirements
+- **Reference**: Acceptance criteria in user story and PRD are authoritative
 
 ---
 
@@ -26,8 +26,8 @@ Use `agents/todo-template.md` as your guide. Read the PRD and user story, then o
 3. **React Components & State** — Create/modify components with all states
 4. **Data Model & Persistence** — TypeScript interfaces, Rust structs, storage
 5. **Integration** — Wire components to commands, file operations, FFmpeg (if applicable)
-6. **Manual Testing** — Reference test gates from PRD (happy path, edge cases, errors)
-7. **Performance** — Verify targets from prd-mvp (if applicable)
+6. **Manual Testing** — Reference test gates from PRD Section 10 (happy path, edge cases, errors)
+7. **Performance** — Verify performance targets from PRD (if applicable)
 8. **Definition of Done** — All acceptance criteria pass, no console errors, docs updated
 9. **PR & Merge** — Create branch, open PR, link story and PRD
 
@@ -35,7 +35,7 @@ Use `agents/todo-template.md` as your guide. Read the PRD and user story, then o
 - Each task < 1 hour of work
 - Start with backend (Service Layer), then frontend (Components)
 - Include acceptance criteria per task
-- Reference specific test gates from prd-mvp
+- Reference test gates from the PRD (Section 10: Testing & Acceptance Gates)
 - **Verify with user**: Present TODO for approval before implementing
 
 ---
@@ -43,8 +43,8 @@ Use `agents/todo-template.md` as your guide. Read the PRD and user story, then o
 ### Step 2: Understand
 
 1. Read user story (acceptance criteria = definition of done)
-2. Read PRD sections: Functional Requirements, Testing & Acceptance Gates, Definition of Done
-3. Read TODO: Understand task breakdown and order you created
+2. Read PRD sections: Summary, Functional Requirements, Testing & Acceptance Gates, Definition of Done
+3. Read TODO: Understand task breakdown and order
 4. Ask clarifying questions if anything is unclear
 5. **DO NOT START CODING until you understand the full scope**
 
@@ -216,7 +216,7 @@ gh pr create \
 **If you get stuck:**
 1. Document the blocker in TODO
 2. Re-read the PRD section that applies
-3. Check prd-mvp.md for examples (data models, test gates)
+3. Check the PRD's data model, component, and API sections for guidance
 4. Ask for clarification
 
 **If tests fail:**

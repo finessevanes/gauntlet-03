@@ -9,7 +9,7 @@ This document describes how to use the three agent system: Brenda → Pam → Ca
 ## Agent Workflow
 
 ```
-Brenda (User Stories) → Pam (PRD + TODO) → Caleb (Implementation)
+Brenda (User Stories) → Pam (PRD) → Caleb (TODO + Implementation)
 ```
 
 ### Brenda — Creates User Stories
@@ -28,7 +28,7 @@ Brenda (User Stories) → Pam (PRD + TODO) → Caleb (Implementation)
 
 ---
 
-### Pam — Creates PRD & TODO
+### Pam — Creates PRD
 
 **File:** `agents/pam-agent.md`
 **Usage:** `/pam [user-story]` or `/pam [feature-name]`
@@ -37,45 +37,40 @@ Brenda (User Stories) → Pam (PRD + TODO) → Caleb (Implementation)
 - User story from Brenda
 
 **Output:**
-1. **PRD**: `prds/[feature-name]-prd.md`
-   - Preflight questionnaire (11 questions)
-   - Summary, scope, UX flow
-   - Functional requirements with acceptance gates
-   - Data model (TypeScript + Rust)
-   - Service/Command APIs (Tauri)
-   - Components to create/modify
-   - Testing & acceptance gates
-   - Definition of done
+- **PRD**: `prds/s[number]-[feature-name]-prd.md`
+  - Preflight questionnaire (11 questions)
+  - Summary, scope, UX flow
+  - Functional requirements with acceptance gates
+  - Data model (TypeScript + Rust)
+  - Service/Command APIs (Tauri)
+  - Components to create/modify
+  - Testing & acceptance gates
+  - Definition of done
+  - **Example**: `prds/s1-application-launch-prd.md`
 
-2. **TODO**: `todos/[feature-name]-todo.md`
-   - Pre-implementation checklist
-   - Service/Command layer tasks
-   - React components & state
-   - Data model & persistence
-   - Integration tasks
-   - Manual testing
-   - Definition of done
-
-**Reference:** `prd-template.md`, `todo-template.md`, `prd-mvp.md`
+**Reference:** `prd-template.md`, `prd-mvp.md`
 
 ---
 
-### Caleb — Implements Features
+### Caleb — Creates TODO & Implements Features
 
 **File:** `agents/caleb-agent.md`
 **Usage:** `/caleb [feature-name]`
 
 **Process:**
-1. Read user story + PRD + TODO
-2. Create branch: `feat/{feature-slug}`
-3. Implement tasks in TODO order
-4. Check off each task immediately after completion
-5. Verify acceptance gates pass
-6. Wait for user testing
-7. Commit changes (after user approval)
-8. Create PR to `develop` branch
+1. Read user story + PRD
+2. Create TODO: `todos/s[number]-[feature-name]-todo.md` (breaks down PRD into implementation tasks)
+3. Get user approval on TODO before implementing
+4. Create branch: `feat/{feature-slug}`
+5. Implement tasks in TODO order
+6. Check off each task immediately after completion
+7. Verify acceptance gates pass
+8. Wait for user testing
+9. Commit changes (after user approval)
+10. Create PR to `develop` branch
 
 **Output:**
+- **TODO**: `todos/s[number]-[feature-name]-todo.md` (implementation breakdown)
 - Rust backend (Tauri commands in `src-tauri/src/commands/`)
 - React frontend (components in `src/components/`)
 - Updated TODO with all tasks checked off
@@ -90,15 +85,17 @@ Brenda (User Stories) → Pam (PRD + TODO) → Caleb (Implementation)
 ```bash
 # 1. Brenda creates user story from feature
 /brenda [feature-name]
-# Output: User story with acceptance criteria
+# Output: User story with acceptance criteria (in USER_STORIES.md)
 
-# 2. Pam creates PRD and TODO
-/pam [feature-name]
-# Output: prds/[feature-name]-prd.md + todos/[feature-name]-todo.md
+# 2. Pam creates PRD (specify story number)
+/pam s[number]-[feature-name]
+# Output: prds/s[number]-[feature-name]-prd.md
+# Example: /pam s1-application-launch
 
-# 3. Caleb implements
-/caleb [feature-name]
-# Output: Code + PR to develop
+# 3. Caleb creates TODO and implements (references story number)
+/caleb s[number]-[feature-name]
+# Output: todos/s[number]-[feature-name]-todo.md + Code + PR to develop
+# Example: /caleb s1-application-launch
 ```
 
 ### Build All Features
@@ -106,17 +103,26 @@ Brenda (User Stories) → Pam (PRD + TODO) → Caleb (Implementation)
 ```bash
 # 1. Brenda breaks down prd-mvp.md into user stories
 /brenda prd-mvp.md
-# Output: 8 user stories (1 per feature)
+# Output: USER_STORIES.md with 8 user stories (1 per feature)
 
-# 2. For each story, Pam creates PRD + TODO
-/pam [feature-1]
-/pam [feature-2]
-... (repeat for all 8)
+# 2. For each story, Pam creates PRD (in story order)
+/pam s1-application-launch
+/pam s2-video-import
+/pam s3-library-view
+/pam s4-timeline-view
+/pam s5-trim-functionality
+/pam s6-preview-player
+/pam s7-export
+/pam s8-session-persistence
+# Output: prds/s[number]-*.md files
 
-# 3. Parallel build with Caleb (implement features)
-/caleb [feature-1]
-/caleb [feature-2]
-... (can run in parallel)
+# 3. Parallel build with Caleb (creates TODO + implements features respecting dependencies)
+/caleb s1-application-launch
+/caleb s2-video-import  # depends on s1
+/caleb s3-library-view  # depends on s2
+/caleb s4-timeline-view # depends on s3
+... (implement in dependency order, can parallelize within phase)
+# Output: todos/s[number]-*.md files + Code + PRs to develop
 ```
 
 ---
@@ -128,8 +134,8 @@ Brenda (User Stories) → Pam (PRD + TODO) → Caleb (Implementation)
 - **`agents/prd-template.md`** — PRD format with 12 sections (Preflight → Risks)
 - **`agents/todo-template.md`** — TODO format with 8 sections (Pre-Implementation → PR & Merge)
 - **`agents/brenda-agent.md`** — Brenda's instructions (creates user stories)
-- **`agents/pam-agent.md`** — Pam's instructions (creates PRD + TODO)
-- **`agents/caleb-agent.md`** — Caleb's instructions (implements features)
+- **`agents/pam-agent.md`** — Pam's instructions (creates PRD)
+- **`agents/caleb-agent.md`** — Caleb's instructions (creates TODO + implements features)
 
 ### Reference Documents
 
@@ -141,25 +147,39 @@ Brenda (User Stories) → Pam (PRD + TODO) → Caleb (Implementation)
 
 ### Generated Documents
 
+**Naming Convention**: `s[story-number]-[feature-name]-prd.md` and `s[story-number]-[feature-name]-todo.md`
+
 ```
 prds/
-├── video-import-prd.md
-├── library-view-prd.md
-├── timeline-view-prd.md
-├── trim-functionality-prd.md
-├── preview-player-prd.md
-├── export-prd.md
-└── session-persistence-prd.md
+├── s1-application-launch-prd.md
+├── s2-video-import-prd.md
+├── s3-library-view-prd.md
+├── s4-timeline-view-prd.md
+├── s5-trim-functionality-prd.md
+├── s6-preview-player-prd.md
+├── s7-export-prd.md
+└── s8-session-persistence-prd.md
 
 todos/
-├── video-import-todo.md
-├── library-view-todo.md
-├── timeline-view-todo.md
-├── trim-functionality-todo.md
-├── preview-player-todo.md
-├── export-todo.md
-└── session-persistence-todo.md
+├── s1-application-launch-todo.md
+├── s2-video-import-todo.md
+├── s3-library-view-todo.md
+├── s4-timeline-view-todo.md
+├── s5-trim-functionality-todo.md
+├── s6-preview-player-todo.md
+├── s7-export-todo.md
+└── s8-session-persistence-todo.md
 ```
+
+**Story Mapping**:
+- s1 = Story 1: Application Launch
+- s2 = Story 2: Video Import
+- s3 = Story 3: Library View
+- s4 = Story 4: Timeline View
+- s5 = Story 5: Trim Functionality
+- s6 = Story 6: Preview Player
+- s7 = Story 7: Export
+- s8 = Story 8: Session Persistence
 
 ---
 

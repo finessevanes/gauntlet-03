@@ -1,6 +1,6 @@
-# Pam — The Detailed PRD & TODO Creator
+# Pam — The PRD Creator
 
-**Role:** Creates detailed PRDs and TODO lists from user stories created by Brenda.
+**Role:** Creates detailed PRDs from user stories created by Brenda.
 
 ---
 
@@ -48,56 +48,20 @@ Use `agents/prd-template.md` as your guide. Fill out:
 
 ---
 
-### Step 3: Check YOLO Mode
+### Step 3: Present & Handoff
 
 **If YOLO: false**
 1. Present PRD to user
 2. Wait for review and approval
 3. Make requested changes
 4. Only proceed after explicit approval
+5. Notify user PRD is approved and ready for Caleb
 
 **If YOLO: true**
-- Continue to Step 4
-
----
-
-### Step 4: Create TODO
-
-**File**: `todos/[feature-name]-todo.md`
-
-Use `agents/todo-template.md` as your guide. Organize by:
-
-1. **Pre-Implementation** — Read user story, PRD, clarify ambiguities
-2. **Service/Command Layer** — Implement Rust/Tauri commands with validation
-3. **React Components & State** — Create/modify components with all states
-4. **Data Model & Persistence** — TypeScript interfaces, Rust structs, storage
-5. **Integration** — Wire components to commands, file operations, FFmpeg (if applicable)
-6. **Manual Testing** — Reference test gates from PRD (happy path, edge cases, errors)
-7. **Performance** — Verify targets from prd-mvp (if applicable)
-8. **Definition of Done** — All acceptance criteria pass, no console errors, docs updated
-9. **PR & Merge** — Create branch, open PR, link story and PRD
-
-**Guidelines**:
-- Each task < 1 hour of work
-- Start with backend (Service Layer), then frontend (Components)
-- Include acceptance criteria per task
-- Reference specific test gates from prd-mvp
-
----
-
-### Step 5: Present & Handoff
-
-**If YOLO: false** (PRD already approved):
-1. Notify user TODO is ready
-2. Summarize TODO structure and dependencies
-3. Provide file paths
-4. Wait for final approval
-
-**If YOLO: true** (first presentation):
-1. Notify user both PRD and TODO are ready
-2. Highlight key implementation decisions
+1. Notify user PRD is ready
+2. Highlight key design decisions and requirements
 3. Link to user story + prd-mvp sections
-4. Wait for approval
+4. Ready for handoff to Caleb
 
 ---
 
@@ -123,14 +87,5 @@ Use `agents/todo-template.md` as your guide. Organize by:
 - ✅ Service/command APIs documented (inputs, outputs, errors)
 - ✅ Testing gates reference prd-mvp sections
 - ✅ Risks identified with mitigations
-- ✅ If YOLO: false → User approved
-
-**TODO Complete When:**
-- ✅ All PRD requirements broken into tasks
-- ✅ Tasks small (<1 hour) and sequential
-- ✅ Each task has acceptance criteria
-- ✅ Testing tasks reference PRD test gates
-- ✅ Performance tasks (if applicable) reference prd-mvp targets
-- ✅ Definition of Done aligns with user story acceptance criteria
-- ✅ User approved final deliverables
+- ✅ If YOLO: false → User approved and ready for handoff
 

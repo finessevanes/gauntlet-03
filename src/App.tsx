@@ -1,51 +1,86 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
+import { useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { useSession } from "./context/SessionContext";
+import { AppShell } from "./components/AppShell";
+import { ErrorDialog } from "./components/ErrorDialog";
+import { AppInitState } from "./types/session";
 import "./App.css";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  const { session, loading, error, setSession, setLoading, setError } =
+    useSession();
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
+  // Initialize app on mount
+  useEffect(() => {
+    const initializeApp = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Call Tauri command to initialize app
+        const result: AppInitState = await invoke("init_app");
+
+        if (result.ffmpegStatus !== "ok") {
+          setError("FFmpeg binary not found. Please reinstall the app.");
+          return;
+        }
+
+        // Restore session state
+        setSession(result.session);
+      } catch (err) {
+        const errorMsg =
+          err instanceof Error ? err.message : String(err);
+        setError(errorMsg);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeApp();
+  }, [setSession, setLoading, setError]);
+
+  // Save session on window close
+  useEffect(() => {
+    const handleBeforeUnload = async () => {
+      try {
+        await invoke("save_session", { session });
+      } catch (err) {
+        console.error("Failed to save session:", err);
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [session]);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="app-loading">
+        <div className="spinner"></div>
+        <p>Initializing...</p>
+      </div>
+    );
   }
 
-  return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
+  // Error state
+  if (error) {
+    return (
+      <ErrorDialog
+        title="Cannot Start"
+        message={error}
+        onClose={() => {
+          // Close the application window
+          window.close();
         }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
-  );
+      />
+    );
+  }
+
+  // Success state - render main app
+  return <AppShell session={session} onSessionChange={setSession} />;
 }
 
 export default App;

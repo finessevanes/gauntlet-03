@@ -107,19 +107,20 @@ For each acceptance criterion from the user story:
 
 ### Step 6: Commit & Create PR
 
-**🛑 WAIT FOR USER TESTING FIRST**
+**🛑 CRITICAL: NEVER COMMIT UNTIL USER CONFIRMS ALL TEST GATES PASS**
 
 **After implementation & verification:**
 1. Inform user: "Code complete. Ready for your testing."
-2. User tests the feature locally
-3. **WAIT for explicit approval**: "looks good", "commit it", "ready to commit"
-4. Only then proceed to commit
+2. User tests each test gate from PRD
+3. **WAIT for explicit confirmation on EACH gate**: "Gate 1 passes", "Gate 2 passes", etc.
+4. **ONLY after user says "ready to commit" or "looks good"** → proceed to commit
+5. **Never commit if any gate is unclear or untested**
 
 **If user finds issues:**
 - Document in TODO
 - Fix issues
 - Check off fix task
-- WAIT for user to test again
+- WAIT for user to test ALL gates again before committing
 
 ---
 

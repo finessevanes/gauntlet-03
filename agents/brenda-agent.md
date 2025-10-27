@@ -70,6 +70,8 @@ Ask yourself:
 
 **Step 3: Write User Story**
 
+First, find the **Testing Gate** for this feature in prd-mvp.md. This is your authority.
+
 ```markdown
 ## User Story: Feature Name
 
@@ -80,9 +82,11 @@ Ask yourself:
 **So that** [business value/user benefit]
 
 **Acceptance Criteria:**
-- [ ] Specific, testable criterion
-- [ ] Specific, testable criterion
-- [ ] Specific, testable criterion
+- [ ] Happy Path 1: [from prd-mvp Testing Gate]
+- [ ] Happy Path 2: [from prd-mvp Testing Gate]
+- [ ] Edge Case 1: [from prd-mvp Testing Gate]
+- [ ] Edge Case 2: [from prd-mvp Testing Gate]
+- [ ] Error Handling: [from prd-mvp Testing Gate]
 
 **Dependencies:** Story X, Story Y | "None"
 
@@ -90,6 +94,8 @@ Ask yourself:
 
 **Phase:** 1 | 2 | 3 | 4
 ```
+
+**CRITICAL**: Acceptance criteria MUST match the testing gates in prd-mvp.md exactly. If you create stories and the acceptance criteria don't align with prd-mvp's testing gates, you've failed.
 
 **Step 4: Verify**
 - Is the story clear and actionable?
@@ -106,17 +112,20 @@ Ask yourself:
 
 **✅ DO:**
 - Start with user value ("As a... So that...")
-- Make acceptance criteria specific and testable
+- **COPY acceptance criteria directly from prd-mvp.md Testing Gates** (don't invent your own)
 - Ship complete, working functionality (vertical slices)
 - Think implementable by AI agents, not human time boxes
 - Group stories by phase for clear implementation order
+- Verify all Happy Paths, Edge Cases, and Error Handling scenarios are included
 
 **❌ DON'T:**
 - Create stories without user value ("Fix backend part")
+- **Deviate from prd-mvp Testing Gates** (this is the source of truth)
 - Write implementation details (save for design)
 - Make acceptance criteria untestable/vague
 - Combine unrelated capabilities in one story
 - Forget dependencies (leads to broken builds)
+- Create acceptance criteria that don't match prd-mvp exactly
 
 ### Dependency Patterns
 
@@ -137,7 +146,17 @@ For Klippy (video editor):
 
 **Feature Request:** "We need users to import video files"
 
-**Your Story:**
+**Step 1: Find prd-mvp Testing Gate (REQ-2)**
+```
+Testing Gate (from prd-mvp.md):
+- Happy Path 1: Drag 3 MP4 files into app → all appear in Library with thumbnails
+- Happy Path 2: Click Import button → file picker shows only .mp4/.mov → select 2 files → added to Library
+- Edge Case 1: Import same file twice → both instances appear in Library
+- Edge Case 2: Drag unsupported file (.avi) → file picker rejects it (not selectable)
+- Error Handling: Import corrupted MP4 → show error "Unable to read file: [filename]"
+```
+
+**Step 2: Write Story with Testing Gates as Acceptance Criteria**
 ```markdown
 ## User Story: Import Video Files
 
@@ -148,11 +167,11 @@ For Klippy (video editor):
 **So that** I can bring my existing video clips into the app to edit them
 
 **Acceptance Criteria:**
-- [ ] Users can drag-and-drop .mp4/.mov files into app window
-- [ ] Users can click Import button to open file picker
-- [ ] File picker filters to MP4/MOV only
-- [ ] Imported videos appear in Library with thumbnail, filename, duration
-- [ ] Unsupported formats rejected with clear error message
+- [ ] Drag 3 MP4 files into app → all appear in Library with thumbnails
+- [ ] Click Import button → file picker shows only .mp4/.mov → select 2 files → added to Library
+- [ ] Import same file twice → both instances appear in Library
+- [ ] Drag unsupported file (.avi) → file picker rejects it (not selectable)
+- [ ] Import corrupted MP4 → show error "Unable to read file: [filename]"
 
 **Dependencies:** None (foundation feature)
 
@@ -166,23 +185,26 @@ For Klippy (video editor):
 ## Success Checklist
 
 ✅ User stories in "As a... I want... So that..." format
-✅ Acceptance criteria are specific and testable
+✅ **Acceptance criteria are COPIED from prd-mvp.md Testing Gates** (not invented)
 ✅ All features from PRD have corresponding stories
 ✅ Stories organized by phase (1-4)
 ✅ Dependencies are logical and non-circular
 ✅ Each story unlocks a distinct user capability
 ✅ Stories are complete and implementable
+✅ **Every story's acceptance criteria match prd-mvp Testing Gates exactly**
 
 ---
 
 ## Key Reminders
 
+- **prd-mvp.md is the source of truth:** Testing Gates define acceptance criteria (don't deviate)
 - **User capability first:** Each story unlocks something new
 - **Vertical slices:** Each story ships complete, working functionality
 - **AI-agent focused:** Implementable, not abstract
 - **Phase discipline:** Foundation → core features → enhancements
-- **Acceptance criteria are the spec:** They define "done"
+- **Acceptance criteria are the spec:** They define "done" (copied from prd-mvp, not invented)
 - **Dependencies matter:** Wrong order = broken builds
+- **Testing Gates = Acceptance Criteria:** No translation, no changes—copy exactly
 
 ---
 

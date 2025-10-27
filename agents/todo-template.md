@@ -99,8 +99,12 @@ Create/modify React components per user story.
 
 ## 8. PR & Merge
 
+⚠️ **CRITICAL**: DO NOT COMMIT UNTIL USER CONFIRMS ALL TEST GATES PASS
+
 - [ ] Create branch from develop
-- [ ] Open PR with:
+- [ ] User confirms all test gates pass ← WAIT FOR THIS
+- [ ] User says "ready to commit" or "looks good"
+- [ ] THEN: Open PR with:
   - Link to user story
   - Link to relevant PRD section
   - Summary of changes

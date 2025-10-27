@@ -1,0 +1,3 @@
+#!/bin/bash
+# Placeholder FFmpeg binary for testing
+exit 0

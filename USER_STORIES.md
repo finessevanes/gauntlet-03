@@ -255,20 +255,28 @@ This document breaks down the Klippy MVP PRD into 8 detailed user stories, each 
 
 ## Next Steps
 
-1. **Pam Phase**: For each story, run `/pam [story-name]` to generate:
-   - `prds/[story-name]-prd.md` — Detailed PRD with preflight, scope, UX flow, requirements
-   - `todos/[story-name]-todo.md` — Implementation TODO with pre-implementation, service, component, integration tasks
+**Workflow: Brenda → Pam → Caleb (no redundancy)**
 
-2. **Caleb Phase**: For each story, run `/caleb [story-name]` to implement:
-   - Rust backend (Tauri commands)
-   - React frontend (components, state management)
-   - Acceptance gate verification
-   - PR to `develop` branch
+1. **Brenda Phase** (✅ Complete): User stories + acceptance criteria extracted from `prd-mvp.md` testing gates
 
-3. **Parallel Build**: Once PRDs/TODOs are created, features can be built in parallel within phase dependencies.
+2. **Pam Phase**: For each story, run `/pam s[#]-[story-name]` to generate detailed PRD:
+   - **Input**: User story (acceptance criteria already validated against prd-mvp.md by Brenda)
+   - **Output**: `prds/s[#]-[story-name]-prd.md` with preflight, scope, UX flow, functional requirements, data model, APIs, test gates
+   - **Note**: Pam does NOT re-reference prd-mvp.md; accepts Brenda's acceptance criteria as authoritative
+
+3. **Caleb Phase**: For each story, run `/caleb s[#]-[story-name]` to implement:
+   - **Input**: User story + PRD (which contains all acceptance gates from Brenda)
+   - **Output**:
+     - `todos/s[#]-[story-name]-todo.md` — Implementation breakdown
+     - Rust backend (Tauri commands in `src-tauri/src/commands/`)
+     - React frontend (components in `src/components/`)
+   - **Note**: Caleb references PRD test gates (Section 10), not prd-mvp.md directly
+
+4. **Parallel Build**: Once PRDs/TODOs are created, features can be built in parallel within phase dependencies.
 
 ---
 
 **Document Status**: Ready for PRD Generation
-**Reference**: `prd-mvp.md`, `agents/brenda-agent.md`
+**Reference**: `agents/brenda-agent.md` (source of truth for acceptance criteria), `agents/pam-agent.md`, `agents/caleb-agent.md`
+**Note**: `prd-mvp.md` is referenced only by Brenda; Pam and Caleb follow the chain without redundancy
 

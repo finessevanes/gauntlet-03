@@ -33,21 +33,72 @@ export const ImportProvider: React.FC<{ children: React.ReactNode }> = ({
     async (filePaths: string[]) => {
       if (filePaths.length === 0) return;
 
+      // Check localStorage usage before importing
+      try {
+        const stored = localStorage.getItem("clipMetadata");
+        if (stored) {
+          const sizeInMB = new Blob([stored]).size / (1024 * 1024);
+          console.log(`[Import] Current localStorage usage: ${sizeInMB.toFixed(2)}MB`);
+
+          // Warn if approaching quota (typical limit is 5-10MB)
+          if (sizeInMB > 4) {
+            console.warn(`[Import] localStorage usage is high. Importing ${filePaths.length} more clips may cause issues.`);
+          }
+        }
+      } catch (err) {
+        console.warn("[Import] Failed to check storage usage:", err);
+      }
+
+      // Limit maximum batch import size to prevent quota issues
+      const MAX_BATCH_SIZE = 50;
+      if (filePaths.length > MAX_BATCH_SIZE) {
+        setError(`Too many files. Please import ${MAX_BATCH_SIZE} or fewer files at a time.`);
+        return;
+      }
+
       try {
         setIsImporting(true);
         setImportQueue(filePaths);
         setError(undefined);
+        setImportProgress(0);
 
-        // Simulate progress updates for each file
+        // Process files one at a time to show real progress
+        const allClips: ImportedClip[] = [];
+        const allErrors: string[] = [];
+
         for (let i = 0; i < filePaths.length; i++) {
-          setCurrentImportFile(filePaths[i]);
-          setImportProgress(Math.round(((i + 1) / filePaths.length) * 100));
+          const filePath = filePaths[i];
+          setCurrentImportFile(filePath);
+
+          try {
+            // Import single file
+            const result: ImportResult = await invoke("import_video_files", {
+              filePaths: [filePath],
+            });
+
+            // Collect results
+            allClips.push(...result.clips);
+            allErrors.push(...result.errors);
+
+            // Update progress after each file completes
+            setImportProgress(Math.round(((i + 1) / filePaths.length) * 100));
+
+            // Small delay to prevent overwhelming the system
+            if (i < filePaths.length - 1) {
+              await new Promise(resolve => setTimeout(resolve, 100));
+            }
+          } catch (err) {
+            const errorMsg = err instanceof Error ? err.message : String(err);
+            allErrors.push(`${filePath}: ${errorMsg}`);
+          }
         }
 
-        // Call Tauri command to import files
-        const result: ImportResult = await invoke("import_video_files", {
-          filePaths,
-        });
+        // Create combined result
+        const result: ImportResult = {
+          success: allErrors.length === 0,
+          clips: allClips,
+          errors: allErrors,
+        };
 
         // Handle errors
         if (result.errors.length > 0) {
@@ -71,23 +122,66 @@ export const ImportProvider: React.FC<{ children: React.ReactNode }> = ({
             clips: [...session.clips, ...newClips],
           });
 
-          // Store metadata in localStorage temporarily
-          const clipMetadata = result.clips.reduce((acc, clip) => {
-            acc[clip.id] = {
-              thumbnail: clip.thumbnail,
-              resolution: clip.resolution,
-              frameRate: clip.frameRate,
-              codec: clip.codec,
-              importedAt: clip.importedAt,
-            };
-            return acc;
-          }, {} as Record<string, any>);
+          // Store metadata in localStorage temporarily with quota error handling
+          try {
+            const clipMetadata = result.clips.reduce((acc, clip) => {
+              acc[clip.id] = {
+                thumbnail: clip.thumbnail,
+                resolution: clip.resolution,
+                frameRate: clip.frameRate,
+                codec: clip.codec,
+                importedAt: clip.importedAt,
+              };
+              return acc;
+            }, {} as Record<string, any>);
 
-          const existing = localStorage.getItem("clipMetadata");
-          const merged = existing
-            ? { ...JSON.parse(existing), ...clipMetadata }
-            : clipMetadata;
-          localStorage.setItem("clipMetadata", JSON.stringify(merged));
+            const existing = localStorage.getItem("clipMetadata");
+            const merged = existing
+              ? { ...JSON.parse(existing), ...clipMetadata }
+              : clipMetadata;
+
+            localStorage.setItem("clipMetadata", JSON.stringify(merged));
+          } catch (storageErr) {
+            // Handle localStorage quota exceeded
+            if (storageErr instanceof Error &&
+                (storageErr.name === 'QuotaExceededError' ||
+                 storageErr.message.includes('quota'))) {
+              console.warn("LocalStorage quota exceeded. Attempting to free up space...");
+
+              // Try to clear and save just the new clips
+              try {
+                const clipMetadata = result.clips.reduce((acc, clip) => {
+                  acc[clip.id] = {
+                    thumbnail: clip.thumbnail,
+                    resolution: clip.resolution,
+                    frameRate: clip.frameRate,
+                    codec: clip.codec,
+                    importedAt: clip.importedAt,
+                  };
+                  return acc;
+                }, {} as Record<string, any>);
+
+                // Keep only metadata for current session clips
+                const currentClipIds = new Set([...session.clips.map(c => c.id), ...result.clips.map(c => c.id)]);
+                const existing = localStorage.getItem("clipMetadata");
+                const filtered = existing
+                  ? Object.fromEntries(
+                      Object.entries(JSON.parse(existing))
+                        .filter(([id]) => currentClipIds.has(id))
+                    )
+                  : {};
+
+                const merged = { ...filtered, ...clipMetadata };
+                localStorage.setItem("clipMetadata", JSON.stringify(merged));
+                console.info("Successfully freed up space. Old clip thumbnails removed.");
+              } catch (retryErr) {
+                console.error("Failed to recover from quota error:", retryErr);
+                setError("Storage full: Too many clips imported. Some thumbnails may not display. Try importing fewer clips at once.");
+              }
+            } else {
+              throw storageErr;
+            }
+          }
         }
       } catch (err) {
         const errorMsg = err instanceof Error ? err.message : String(err);

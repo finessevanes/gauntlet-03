@@ -4,6 +4,7 @@ import { Session } from "../types/session";
 import { EmptyState } from "./EmptyState";
 import { VideoImportButton } from "./VideoImportButton";
 import { ImportProgress } from "./ImportProgress";
+import { Library } from "./Library";
 import { useImport } from "../context/ImportContext";
 import "./AppShell.css";
 
@@ -15,23 +16,6 @@ interface AppShellProps {
 export const AppShell: React.FC<AppShellProps> = ({ session }) => {
   const { importFiles } = useImport();
   const [isDragging, setIsDragging] = useState(false);
-  const [clipMetadata, setClipMetadata] = useState<Record<string, any>>({});
-
-  // Load clip metadata from localStorage
-  useEffect(() => {
-    const loadMetadata = () => {
-      const stored = localStorage.getItem("clipMetadata");
-      if (stored) {
-        setClipMetadata(JSON.parse(stored));
-      }
-    };
-
-    loadMetadata();
-
-    // Reload metadata when clips change
-    const interval = setInterval(loadMetadata, 500);
-    return () => clearInterval(interval);
-  }, [session.clips]);
 
   // Set up Tauri's native drag-drop event listener
   useEffect(() => {
@@ -65,91 +49,60 @@ export const AppShell: React.FC<AppShellProps> = ({ session }) => {
   return (
     <div className={`app-shell ${isDragging ? "dragging" : ""}`}>
       {/* Left Panel: Library */}
-      <div className="library-panel">
-        <div className="panel-header">
-          <h2>Library</h2>
-          <VideoImportButton />
+      <div style={{ display: "flex", height: "100%", width: "100%" }}>
+        {/* Library Sidebar */}
+        <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+          <div style={{
+            padding: "8px 12px",
+            borderBottom: "1px solid #333",
+            backgroundColor: "#1e1e1e",
+            display: "flex",
+            justifyContent: "flex-end"
+          }}>
+            <VideoImportButton />
+          </div>
+          <Library />
         </div>
-        <div className="panel-content">
-          {session.clips.length === 0 ? (
-            <EmptyState message="Drag & drop video files or click Import to get started" />
-          ) : (
-            <div className="clips-list">
-              {session.clips.map((clip) => {
-                const metadata = clipMetadata[clip.id];
-                return (
-                  <div key={clip.id} className="clip-card">
-                    <div className="clip-thumbnail">
-                      {metadata?.thumbnail ? (
-                        <img
-                          src={metadata.thumbnail}
-                          alt={clip.filePath.split("/").pop()}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
-                        />
-                      ) : (
-                        "📹"
-                      )}
-                    </div>
-                    <div className="clip-info">
-                      <p className="clip-filename">
-                        {clip.filePath.split("/").pop()}
-                      </p>
-                      <p className="clip-duration">
-                        {Math.floor(clip.duration)}s
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
+
+        {/* Main content area */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+          {/* Top area: Preview */}
+          <div className="preview-panel" style={{ flex: 1 }}>
+            <div className="panel-header">
+              <h2>Preview</h2>
             </div>
-          )}
-        </div>
-      </div>
+            <div className="panel-content">
+              <EmptyState message="Select a clip or play timeline" icon="▶️" />
+            </div>
+          </div>
 
-      {/* Center Panel: Preview Player */}
-      <div className="preview-panel">
-        <div className="panel-header">
-          <h2>Preview</h2>
+          {/* Bottom area: Timeline */}
+          <div className="timeline-panel" style={{ height: "30%" }}>
+            <div className="panel-header">
+              <h2>Timeline</h2>
+            </div>
+            <div className="panel-content">
+              {session.timelineOrder.length === 0 ? (
+                <EmptyState message="Drag clips here to start editing" icon="📽️" />
+              ) : (
+                <div className="timeline-container">
+                  {session.timelineOrder.map((clipId) => {
+                    const clip = session.clips.find((c) => c.id === clipId);
+                    return (
+                      <div key={clipId} className="timeline-clip">
+                        {clip?.filePath.split("/").pop()}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-        <div className="panel-content">
-          <EmptyState message="Select a clip or play timeline" icon="▶️" />
-        </div>
-      </div>
-
-      {/* Right Sidebar: Controls */}
-      <div className="controls-sidebar">
-        {/* Reserved for future controls */}
       </div>
 
       {/* Import Progress Modal */}
       <ImportProgress />
-
-      {/* Bottom Panel: Timeline */}
-      <div className="timeline-panel">
-        <div className="panel-header">
-          <h2>Timeline</h2>
-        </div>
-        <div className="panel-content">
-          {session.timelineOrder.length === 0 ? (
-            <EmptyState message="Drag clips here to start editing" icon="📽️" />
-          ) : (
-            <div className="timeline-container">
-              {session.timelineOrder.map((clipId) => {
-                const clip = session.clips.find((c) => c.id === clipId);
-                return (
-                  <div key={clipId} className="timeline-clip">
-                    {clip?.filePath.split("/").pop()}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </div>
     </div>
   );
 };

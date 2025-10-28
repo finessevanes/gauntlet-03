@@ -6,6 +6,19 @@ use uuid::Uuid;
 use crate::models::{ImportResult, ImportedClip, VideoMetadata};
 use crate::utils::ffmpeg::get_ffmpeg_path;
 
+/// Checks if a file exists at the given path
+#[tauri::command]
+pub fn check_file_exists(file_path: String) -> Result<bool, String> {
+    use std::fs;
+
+    let path = Path::new(&file_path);
+
+    // Use metadata check as it's more reliable than path.exists()
+    let exists = fs::metadata(&file_path).is_ok();
+
+    Ok(exists)
+}
+
 /// Validates if a video file format is supported (MP4 or MOV with H.264)
 #[tauri::command]
 pub fn validate_video_format(file_path: String, app_handle: AppHandle) -> Result<String, String> {
@@ -194,7 +207,7 @@ pub fn extract_thumbnail(file_path: String, app_handle: AppHandle) -> Result<Str
     let thumbnail_filename = format!("klippy_thumb_{}.jpg", Uuid::new_v4());
     let thumbnail_path = temp_dir.join(&thumbnail_filename);
 
-    // Extract first frame as JPEG
+    // Extract first frame as JPEG (resized to 320x180 for smaller file size)
     let output = Command::new(&ffmpeg_path)
         .args([
             "-i",
@@ -203,8 +216,10 @@ pub fn extract_thumbnail(file_path: String, app_handle: AppHandle) -> Result<Str
             "0",
             "-vframes",
             "1",
+            "-vf",
+            "scale=320:180:force_original_aspect_ratio=decrease,pad=320:180:(ow-iw)/2:(oh-ih)/2",
             "-q:v",
-            "2",
+            "5",
             thumbnail_path.to_str().ok_or("Invalid thumbnail path")?,
         ])
         .output()

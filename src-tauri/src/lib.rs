@@ -3,8 +3,8 @@ mod models;
 mod utils;
 
 use commands::{
-    extract_thumbnail, get_ffmpeg_status, get_video_metadata, import_video_files, init_app,
-    save_session, validate_video_format,
+    check_file_exists, extract_thumbnail, get_ffmpeg_status, get_video_metadata,
+    import_video_files, init_app, save_session, validate_video_format,
 };
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -19,7 +19,8 @@ pub fn run() {
             import_video_files,
             get_video_metadata,
             extract_thumbnail,
-            validate_video_format
+            validate_video_format,
+            check_file_exists
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -4,20 +4,22 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #999;
+  color: #888;
   text-align: center;
+  padding: 40px 20px;
 }
 
 .empty-state-icon {
-  font-size: 64px;
-  margin-bottom: 20px;
-  opacity: 0.5;
+  font-size: 72px;
+  margin-bottom: 16px;
+  opacity: 0.4;
 }
 
 .empty-state-message {
-  font-size: 16px;
+  font-size: 14px;
   margin: 0;
-  color: #666;
+  color: #888;
   max-width: 300px;
-  line-height: 1.5;
+  line-height: 1.6;
+  font-weight: 400;
 }
